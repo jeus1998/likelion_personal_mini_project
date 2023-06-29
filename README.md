@@ -1,1 +1,1 @@
-# MiniProject_Basic_BaeJeWoo
+# 배제우 미니 프로젝트
