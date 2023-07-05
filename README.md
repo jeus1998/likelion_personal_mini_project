@@ -62,12 +62,29 @@
 
 2. 등록된 물품 정보는 누구든지 열람할 수 있다.
 
-* 단일 조회 itemId를 @PathVariable을 통해 받아서 있나 없나 JPA 쿼리 메서드인 findById(id)를 통해 찾고 있으면 해당 내용을 반환했다.
+* 단일 조회
+ itemId를 @PathVariable을 통해 받아서 있나 없나 JPA 쿼리 메서드인 findById(id)를 통해 찾고 있으면 해당 내용을 반환했다.
 ```java
 Optional<MarketEntity> optionalMarket = marketRepository.findById(id);
         if (optionalMarket.isPresent())
             return MarketDto.fromEntity(optionalMarket.get());
 ```
+
+* 전체 조회 ( 페이지 단위 조회 )
+@RequestParam으로 읽고 싶은 page와 limit를 받게 해줬다.
+```java
+  @RequestParam(value = "page", defaultValue = "0") Long page,
+  @RequestParam(value = "limit", defaultValue = "1") Long limit  
+```
+Page 클레스를 이용해서 페이지를 만들었고 모든 내용을 조회해야하니 findAll 쿼리 메서드를 활용하였다.
+```java
+ Pageable pageable = PageRequest.of(Math.toIntExact(page), Math.toIntExact(limit));
+ Page<MarketEntity> MarketEntityPage = marketRepository.findAll(pageable);
+```
+
+3. 등록된 물품 정보는 수정이 가능하다. 
+ 
+
 
    
 
