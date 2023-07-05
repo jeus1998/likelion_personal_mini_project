@@ -60,7 +60,14 @@
   marketEntity.setStatus("판매중");
  ```
 
-2. 등록된 물품 정보는 누구든지 열람할 수 있다. 
+2. 등록된 물품 정보는 누구든지 열람할 수 있다.
+
+* 단일 조회 itemId를 @PathVariable을 통해 받아서 있나 없나 JPA 쿼리 메서드인 findById(id)를 통해 찾고 있으면 해당 내용을 반환했다.
+```java
+Optional<MarketEntity> optionalMarket = marketRepository.findById(id);
+        if (optionalMarket.isPresent())
+            return MarketDto.fromEntity(optionalMarket.get());
+```
 
    
 
