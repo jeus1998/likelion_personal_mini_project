@@ -46,41 +46,24 @@
 1. 물품에 대한 정보를 등록할 수 있다. (반드시 포함되어야 하는 내용은 제목, 설명, 최소가격, 작성자, 비밀번호)
  
  * @Valid 로 유효성 검사를 하였다. 
- ```java
-  public ResponseDto create(@Valid @RequestBody MarketDto dto)
- ```
+
  * @NonNull을 MarketEntity에 반드시 포함되어야하는 필드에 붙였다. -> ex) 제목: title
- ```java
- @NonNull
-    private String title; // 제목
- ```
+
  * 최초로 물품이 등록될 때, 물품의 상태 판매중 
  ```java
   MarketEntity marketEntity = new MarketEntity();
   marketEntity.setStatus("판매중");
  ```
-
 2. 등록된 물품 정보는 누구든지 열람할 수 있다.
 
 * 단일 조회
  itemId를 @PathVariable을 통해 받아서 있나 없나 JPA 쿼리 메서드인 findById(id)를 통해 찾고 있으면 해당 내용을 반환했다.
-```java
-Optional<MarketEntity> optionalMarket = marketRepository.findById(id);
-        if (optionalMarket.isPresent())
-            return MarketDto.fromEntity(optionalMarket.get());
-```
 
 * 전체 조회 ( 페이지 단위 조회 )
 @RequestParam으로 읽고 싶은 page와 limit를 받게 해줬다.
-```java
-  @RequestParam(value = "page", defaultValue = "0") Long page,
-  @RequestParam(value = "limit", defaultValue = "1") Long limit  
-```
+
 Page 클레스를 이용해서 페이지를 만들었고 모든 내용을 조회해야하니 findAll 쿼리 메서드를 활용하였다.
-```java
- Pageable pageable = PageRequest.of(Math.toIntExact(page), Math.toIntExact(limit));
- Page<MarketEntity> MarketEntityPage = marketRepository.findAll(pageable);
-```
+
 
 3. 등록된 물품 정보는 수정이 가능하다. 
  
