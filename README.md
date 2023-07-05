@@ -153,12 +153,12 @@ List<CommentEntity> filteredCommentEntityList = new ArrayList<>();
 
 ```
 1. 등록된 물품에 대하여 구매 제안을 등록할 수 있다. 
-    1. 이때 반드시 포함되어야 하는 내용은 **대상 물품, 제안 가격, 작성자**이다.
+    1. 이때 반드시 포함되어야 하는 내용은 대상 물품, 제안 가격, 작성자이다.
     2. 또한 구매 제안을 등록할 때, 비밀번호 항목을 추가해서 등록한다.
-    3. 구매 제안이 등록될 때, 제안의 상태는 **제안** 상태가 된다.
+    3. 구매 제안이 등록될 때, 제안의 상태는 제안 상태가 된다.
 2. 구매 제안은 대상 물품의 주인과 등록한 사용자만 조회할 수 있다.
-    1. 대상 물품의 주인은, 대상 물품을 등록할 때 사용한 **작성자와 비밀번호**를 첨부해야 한다. 이때 물품에 등록된 모든 구매 제안이 확인 가능하다. 페이지 기능을 지원한다.
-    2. 등록한 사용자는, 조회를 위해서 자신이 사용한 **작성자와 비밀번호**를 첨부해야 한다. 이때 자신이 등록한 구매 제안만 확인이 가능하다. 페이지 기능을 지원한다.
+    1. 대상 물품의 주인은, 대상 물품을 등록할 때 사용한 작성자와 비밀번호를 첨부해야 한다. 이때 물품에 등록된 모든 구매 제안이 확인 가능하다. 페이지 기능을 지원한다.
+    2. 등록한 사용자는, 조회를 위해서 자신이 사용한 작성자와 비밀번호를 첨부해야 한다. 이때 자신이 등록한 구매 제안만 확인이 가능하다. 페이지 기능을 지원한다.
 3. 등록된 제안은 수정이 가능하다. 
     1. 이때, 제안이 등록될때 추가한 **작성자와 비밀번호**를 첨부해야 한다.
 4. 등록된 제안은 삭제가 가능하다. 
@@ -185,8 +185,102 @@ List<NegotiationEntity> findByPasswordAndWriter(String password, String writer);
 List<NegotiationEntity> findByStatusAndItemId(String status, Long itemId);
 ```
 
+1. 등록된 물품에 대하여 구매 제안을 등록할 수 있다. 
+* 반드시 포함되어야하는 부분( 대상 물품, 제안 가격, 작성자, 비밀번호) 
+NegotiationEntity에 대상 물품, 제안가격, 작성자 ,비밀번호 필드를 @NonNull로 지정하고 @RequestBody로 받을 때 @Valid로 유효성 검사를 하였다.
+
+* 구매 제안이 등록될 때, 제안의 상태는 제안 상태가 된다.
+```java
+entity.setStatus("제안 상태");
+```
+
+2. 구매 제안은 대상 물품의 주인과 등록한 사용자만 조회할 수 있다.
+
+* 대상 물품의 주인은 자신의 물품에 대한 모든 제안을 조회가능한다 + 페이지 기능을 지원한다.
+@PathVariable을 통해 해당 itemId를 받았다.
+@RequestBody 를 통해 writer와 password를 받았다.
+@RequestParam으로 읽고 싶은 page와 limit를 받게 해줬다.
+
+먼저 marketRepository.findById(itemId)를 통해 itemId에 해당하는 값이 있는지 확인했다.
+그러고 나서는 password와 writer를 equals를 통해서 체크 하였다.
+writer와 password를 통과하면 findAll메서드를 통해서 모든 구매제안 entity를 List로 가지고오고 itemId가 일치하는 값들만 리스트에 넣어줬다.
+나머지 구현은 comment에서 페이지 구현방식과 동일하다.
 
 
+* 등록한 사용자는, 조회를 위해서 자신이 사용한 작성자와 비밀번호를 첨부해야 한다. 이때 자신이 등록한 구매 제안만 확인이 가능하다. 페이지 기능을 지원한다.
+@RequestParm으로 writer와 password를 받았다.
+@RequestParam으로 읽고 싶은 page와 limit를 받게 해줬다.
+password와 writer에 해당하는 엔티티 리스트를 가져왔다. 
+```java
+ List<NegotiationEntity> EntityList = negotiationRepository.findByPasswordAndWriter(password, writer);
+```
+나머지 페이지 구현방식은 동일하다.
 
+4. 등록된 제안은 삭제가 가능하다. 
+*  이때, 제안이 등록될때 추가한 작성자와 비밀번호를 첨부해야 한다.
+@PathVariable을 통해서 proposalId (제안 id를 받았다.) 
+@RequestBody를 통해서 작성자와 비밀번호를 받았다.
+먼저 findById를 통해 해당 값이 있나 확인하였다.
+equsls를 통해 password와 writer를 비교하였다. 
+그러고 delete 메서드를 통해 삭제하였다.
 
+ 3, 5, 6, 7 같은 경우 모드 같은 요청으로 묶고 같은 메서드에서 동작하게 만들었다.
+ @PathVariable 을 통해서 proposalId를 받았다.
+ @RequestBody를 통해서 NegotiationdDto dto 로 해당 값들을 저장하게 하였다.
+ 응답은 getStatus값에 따라서 다르게 응답하게 만들었다.
+ ```java
+ ResponseDto response = new ResponseDto();
+        if (dto.getStatus() == null){
+            response.setMessage("제안이 수정되었습니다.");
+        }
+        else if ((dto.getStatus().equals("수락")) || (dto.getStatus().equals("거절")) )
+            response.setMessage("제안의 상태가 변경되었습니다.");
+        else if (dto.getStatus().equals("확정"))
+            response.setMessage("구매가 확정되었습니다.");
+```
+ 
+ 3. 등록된 제안은 수정이 가능하다. ( 이때, 제안이 등록될때 추가한 작성자와 비밀번호를 첨부해야 한다.) 
+ 먼저 negotiationRepository.findById(proposalId); 통해서 해당 값이 있나 없나 확인하였다.
+ 없으면 throw NOT_FOUND 
+ 있으면 equals 메서드로 password와 writer를 비교하고 제안 값만 수정하게 만들었다.
+
+ 5. 대상 물품의 주인은 구매 제안을 수락할 수 있다. (이를 위해서 제안의 대상 물품을 등록할 때 사용한 작성자와 비밀번호를 첨부해야 한다.)
+ * 이때 구매 제안의 상태는 수락이 된다.
+ 6.  대상 물품의 주인은 구매 제안을 거절할 수 있다.  (이를 위해서 제안의 대상 물품을 등록할 때 사용한 작성자와 비밀번호를 첨부해야 한다.)
+ * 이때 구매 제안의 상태는 거절이 된다.
+
+ ```java
+ else if (dto.getStatus().equals("수락") || dto.getStatus().equals("거절"))
+ ```
+or 연산자로 요청 status가 수락 아니면 거절이면 동작하게 만들었다.
+marketRepository.findById(item_id)를 통해서 물품 등록자의 정보를 가져왔다.
+equals 메서드로 password와 writer를 체크하였다. 
+통과하면 status를 요청한 status로 set하였다.
+
+7. 구매 제안을 등록한 사용자는, 자신이 등록한 제안이 수락 상태일 경우, 구매 확정을 할 수 있다. (이를 위해서 제안을 등록할 때 사용한 작성자와 비밀번호를 첨부해야 한다.)
+else if (dto.getStatus().equals("확정")) 요청이 확정이면 동작하게 만들었다.
+equals 메서드로 password와 writer를 체크하였다.
+통과하면 현재 status가 수락 상태인지 확인하였다.
+(negotiationEntity.getStatus().equals("수락"))
+* 이때 구매 제안의 상태는 확정 상태가 된다.
+```java
+ negotiationEntity.setStatus("확정");
+ NegotiationDto.fromEntity(negotiationRepository.save(negotiationEntity));
+```
+* 구매 제안이 확정될 경우, 대상 물품의 상태는 판매 완료가 된다.
+```java
+ Optional<MarketEntity> marketEntity = marketRepository.findById(item_id);
+                    MarketEntity market = marketEntity.get();
+                    market.setStatus("판매완료");
+                    MarketDto.fromEntity(marketRepository.save(market));
+```
+* 구매 제안이 확정될 경우, 확정되지 않은 다른 구매 제안의 상태는 모두 거절이 된다.
+```java
+ List<NegotiationEntity> rejectEntity = negotiationRepository.findByStatusAndItemId("제안 상태", item_id);
+                    System.out.println(rejectEntity.size());
+                    for (NegotiationEntity target : rejectEntity) {
+                        target.setStatus("거절");
+                        NegotiationDto.fromEntity(negotiationRepository.save(target));
+                    }
+```
 
