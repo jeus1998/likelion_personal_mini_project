@@ -43,7 +43,14 @@
 ##### 1. Market (멋사마켓 ERD중 sales_item에 해당) 
 ##### MarketController, MarketService, MarketRepository, MarketDto, MarketEntity
 
+1. 물품에 대한 정보를 등록할 수 있다. (반드시 포함되어야 하는 내용은 제목, 설명, 최소가격, 작성자, 비밀번호)
+ * @Valid 로 유효성 검사를 하였다. 
+ ```java
+  public ResponseDto create(@Valid @RequestBody MarketDto dto)
+ ```
+ * @NonNull을 MarketEntity에 반드시 포함되어야하는 필드에 붙였다.
 
+   
 
 
 
