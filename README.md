@@ -44,11 +44,23 @@
 ##### MarketController, MarketService, MarketRepository, MarketDto, MarketEntity
 
 1. 물품에 대한 정보를 등록할 수 있다. (반드시 포함되어야 하는 내용은 제목, 설명, 최소가격, 작성자, 비밀번호)
+ 
  * @Valid 로 유효성 검사를 하였다. 
  ```java
   public ResponseDto create(@Valid @RequestBody MarketDto dto)
  ```
- * @NonNull을 MarketEntity에 반드시 포함되어야하는 필드에 붙였다.
+ * @NonNull을 MarketEntity에 반드시 포함되어야하는 필드에 붙였다. -> ex) 제목: title
+ ```java
+ @NonNull
+    private String title; // 제목
+ ```
+ * 최초로 물품이 등록될 때, 물품의 상태 판매중 
+ ```java
+  MarketEntity marketEntity = new MarketEntity();
+  marketEntity.setStatus("판매중");
+ ```
+
+2. 등록된 물품 정보는 누구든지 열람할 수 있다. 
 
    
 
