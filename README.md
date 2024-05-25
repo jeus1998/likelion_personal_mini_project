@@ -284,7 +284,3 @@ equals 메서드로 password와 writer를 체크하였다.
                         NegotiationDto.fromEntity(negotiationRepository.save(target));
                     }
 ```
-
-
-# MiniProject_Basic_BaeJeWoo
->>>>>>> Stashed changes
