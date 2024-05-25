@@ -32,8 +32,8 @@ public class CommentController {
     @GetMapping
     public Page<CommentDto> readPage(
             @PathVariable("itemId") Long itemId,
-            @RequestParam(value = "page", defaultValue = "0") Long page, // 조회 페이지
-            @RequestParam(value = "limit", defaultValue = "5") Long limit // 한페이지당 리미트
+            @RequestParam(value = "page", defaultValue = "0") Long page,
+            @RequestParam(value = "limit", defaultValue = "10") Long limit
     ){
         return commentService.readCommentAll(itemId, page, limit);
     }

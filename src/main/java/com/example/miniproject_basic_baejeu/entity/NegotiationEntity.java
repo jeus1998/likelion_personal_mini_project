@@ -14,7 +14,6 @@ public class NegotiationEntity {
     private Long id;
 
     @NonNull
-
     private Long itemId;
 
     @NonNull
@@ -28,6 +27,5 @@ public class NegotiationEntity {
     private String password;
 
     public NegotiationEntity() {
-
     }
 }

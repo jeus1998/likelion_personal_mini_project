@@ -149,8 +149,6 @@ public class NegotiationService {
     }
     // 삭제
 
-
-
     public void delete(Long proposalId, NegotiationCheckDto dto){
         Optional<NegotiationEntity> entityOptional = negotiationRepository.findById(proposalId);
         if (entityOptional.isEmpty())
